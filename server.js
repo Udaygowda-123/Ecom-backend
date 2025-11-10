@@ -7,51 +7,57 @@ const authRoutes = require('./routes/auth');
 const adminProductsRoutes = require('./routes/adminProducts');
 const adminOrdersRoutes = require('./routes/adminOrders');
 const publicProducts = require('./routes/publicProducts');
-
 const publicOrders = require('./routes/publicOrders');
-
 const userAuthRoutes = require("./routes/userAuth");
 
-
-
-
+// ✅ Connect Database
 connectDB();
+
 const app = express();
 app.use(express.json());
+
+// ✅ Allow only specific origins (Render + Vercel + local)
 const allowedOrigins = [
-    'http://localhost:5173', // Vite frontend
-    'http://localhost:3000', // for React CRA or fallback
-    'https://ecom-frontend-six-theta.vercel.app' // optional for deployment
-  ];
-  
-  
-  app.use(cors({
-    origin: function (origin, callback) {
-      // allow requests with no origin (like mobile apps or curl)
-      if (!origin) return callback(null, true);
-      if (allowedOrigins.includes(origin)) {
-        return callback(null, true);
+  'http://localhost:5173',
+  'http://localhost:3000',
+  'https://ecom-frontend-six-theta.vercel.app',
+];
+
+// ✅ Simplified + safe CORS config
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
       } else {
-        return callback(new Error('Not allowed by CORS'));
+        console.warn(`❌ Blocked by CORS: ${origin}`);
+        callback(null, false); // <-- do NOT throw an Error here
       }
     },
     credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
-  }));
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  })
+);
+
+// ✅ Preflight support
+app.options('*', cors());
+
+// ✅ Routes
 app.use("/api/admin", authRoutes);
 app.use('/api', publicProducts);
 app.use('/api/admin', adminProductsRoutes);
 app.use('/api/admin', adminOrdersRoutes);
 app.use('/api', publicOrders);
 app.use("/api/user", userAuthRoutes);
-// health
-app.get('/', (req,res)=>res.send('API running'));
 
-// error handler
+// ✅ Health Check
+app.get('/', (req, res) => res.send('API running ✅'));
+
+// ✅ Error handler (last)
 app.use((err, req, res, next) => {
-  console.error(err.stack);
+  console.error('❌ Error:', err.message);
   res.status(500).json({ message: 'Server Error' });
 });
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, ()=> console.log(`Server started on ${PORT}`));
+app.listen(PORT, () => console.log(`✅ Server started on port ${PORT}`));
