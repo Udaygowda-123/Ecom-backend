@@ -19,9 +19,8 @@ connectDB();
 const app = express();
 app.use(express.json());
 const allowedOrigins = [
-    'http://localhost:5173', // Vite frontend
-    'http://localhost:3000', // for React CRA or fallback
-    'https://Ecom-frontend.vercel.app' // optional for deployment
+    'http://localhost:5173', // Vite frontend// for React CRA or fallback
+    'https://ecom-frontend-six-theta.vercel.app' // optional for deployment
   ];
   
   app.use(cors({
