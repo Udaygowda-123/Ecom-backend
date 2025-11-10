@@ -1,3 +1,4 @@
+
 {
     "name": "mern-ecommerce-backend",
     "version": "1.0.0",
@@ -5,7 +6,7 @@
     "scripts": {
       "start": "nodemon server.js",
       "dev": "nodemon server.js",
-      "seed": "node seed/seed.js"
+      "seed": "run seed"
     },
     "dependencies": {
       "bcryptjs": "^2.4.3",
